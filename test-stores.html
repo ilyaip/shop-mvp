@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Store LocalStorage Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-top: 0;
+      color: #333;
+    }
+    button {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background: #4338ca;
+    }
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    .success {
+      color: #059669;
+      font-weight: bold;
+    }
+    .error {
+      color: #dc2626;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 Store LocalStorage Tests</h1>
+  
+  <div class="test-section">
+    <h2>Cart Store Test</h2>
+    <button onclick="testCartStore()">Test Cart Store</button>
+    <div id="cart-result" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>User Store Test</h2>
+    <button onclick="testUserStore()">Test User Store</button>
+    <div id="user-result" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Storage Utilities Test</h2>
+    <button onclick="testStorageUtils()">Test Storage Utils</button>
+    <div id="storage-result" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Clear All Test Data</h2>
+    <button onclick="clearTestData()">Clear LocalStorage</button>
+    <div id="clear-result" class="result"></div>
+  </div>
+
+  <script type="module">
+    // Storage utilities (copied from src/shared/lib/storage.ts)
+    function loadFromStorage(key, defaultValue) {
+      try {
+        const item = localStorage.getItem(key);
+        if (item === null) {
+          return defaultValue;
+        }
+        return JSON.parse(item);
+      } catch (error) {
+        console.error(`Error loading from localStorage (key: ${key}):`, error);
+        return defaultValue;
+      }
+    }
+
+    function saveToStorage(key, value) {
+      try {
+        const serialized = JSON.stringify(value);
+        localStorage.setItem(key, serialized);
+        return true;
+      } catch (error) {
+        console.error(`Error saving to localStorage (key: ${key}):`, error);
+        return false;
+      }
+    }
+
+    function removeFromStorage(key) {
+      try {
+        localStorage.removeItem(key);
+        return true;
+      } catch (error) {
+        console.error(`Error removing from localStorage (key: ${key}):`, error);
+        return false;
+      }
+    }
+
+    // Test functions
+    window.testCartStore = function() {
+      const result = document.getElementById('cart-result');
+      result.innerHTML = 'Running tests...\n\n';
+      
+      try {
+        const CART_KEY = 'cart-items';
+        
+        // Test 1: Save cart items
+        const testCart = [
+          {
+            product: { id: '1', title: 'Test Product', price: 100 },
+            quantity: 2
+          }
+        ];
+        
+        const saved = saveToStorage(CART_KEY, testCart);
+        result.innerHTML += `✓ Save cart: ${saved ? 'SUCCESS' : 'FAILED'}\n`;
+        
+        // Test 2: Load cart items
+        const loaded = loadFromStorage(CART_KEY, []);
+        const loadSuccess = loaded.length === 1 && loaded[0].quantity === 2;
+        result.innerHTML += `✓ Load cart: ${loadSuccess ? 'SUCCESS' : 'FAILED'}\n`;
+        result.innerHTML += `  Loaded: ${JSON.stringify(loaded, null, 2)}\n\n`;
+        
+        // Test 3: Update cart
+        loaded[0].quantity = 3;
+        saveToStorage(CART_KEY, loaded);
+        const updated = loadFromStorage(CART_KEY, []);
+        const updateSuccess = updated[0].quantity === 3;
+        result.innerHTML += `✓ Update cart: ${updateSuccess ? 'SUCCESS' : 'FAILED'}\n`;
+        
+        result.innerHTML += '\n<span class="success">All cart tests passed! ✓</span>';
+      } catch (error) {
+        result.innerHTML += `\n<span class="error">Error: ${error.message}</span>`;
+      }
+    };
+
+    window.testUserStore = function() {
+      const result = document.getElementById('user-result');
+      result.innerHTML = 'Running tests...\n\n';
+      
+      try {
+        const ORDERS_KEY = 'user-orders';
+        
+        // Test 1: Save orders
+        const testOrders = [
+          {
+            id: 'order-1',
+            date: new Date().toISOString(),
+            name: 'Test User',
+            email: 'test@example.com',
+            phone: '+1234567890',
+            address: '123 Test St',
+            items: [],
+            total: 100
+          }
+        ];
+        
+        const saved = saveToStorage(ORDERS_KEY, testOrders);
+        result.innerHTML += `✓ Save orders: ${saved ? 'SUCCESS' : 'FAILED'}\n`;
+        
+        // Test 2: Load orders
+        const loaded = loadFromStorage(ORDERS_KEY, []);
+        const loadSuccess = loaded.length === 1 && loaded[0].id === 'order-1';
+        result.innerHTML += `✓ Load orders: ${loadSuccess ? 'SUCCESS' : 'FAILED'}\n`;
+        result.innerHTML += `  Loaded: ${JSON.stringify(loaded, null, 2)}\n\n`;
+        
+        // Test 3: Add new order
+        testOrders.push({
+          id: 'order-2',
+          date: new Date().toISOString(),
+          name: 'Test User 2',
+          email: 'test2@example.com',
+          phone: '+0987654321',
+          address: '456 Test Ave',
+          items: [],
+          total: 200
+        });
+        saveToStorage(ORDERS_KEY, testOrders);
+        const updated = loadFromStorage(ORDERS_KEY, []);
+        const updateSuccess = updated.length === 2;
+        result.innerHTML += `✓ Add order: ${updateSuccess ? 'SUCCESS' : 'FAILED'}\n`;
+        
+        result.innerHTML += '\n<span class="success">All user tests passed! ✓</span>';
+      } catch (error) {
+        result.innerHTML += `\n<span class="error">Error: ${error.message}</span>`;
+      }
+    };
+
+    window.testStorageUtils = function() {
+      const result = document.getElementById('storage-result');
+      result.innerHTML = 'Running tests...\n\n';
+      
+      try {
+        const TEST_KEY = 'test-key';
+        
+        // Test 1: Save and load string
+        saveToStorage(TEST_KEY, 'test-value');
+        const str = loadFromStorage(TEST_KEY, '');
+        result.innerHTML += `✓ String: ${str === 'test-value' ? 'SUCCESS' : 'FAILED'}\n`;
+        
+        // Test 2: Save and load object
+        const testObj = { name: 'Test', value: 123 };
+        saveToStorage(TEST_KEY, testObj);
+        const obj = loadFromStorage(TEST_KEY, {});
+        const objSuccess = obj.name === 'Test' && obj.value === 123;
+        result.innerHTML += `✓ Object: ${objSuccess ? 'SUCCESS' : 'FAILED'}\n`;
+        
+        // Test 3: Save and load array
+        const testArr = [1, 2, 3];
+        saveToStorage(TEST_KEY, testArr);
+        const arr = loadFromStorage(TEST_KEY, []);
+        const arrSuccess = arr.length === 3 && arr[0] === 1;
+        result.innerHTML += `✓ Array: ${arrSuccess ? 'SUCCESS' : 'FAILED'}\n`;
+        
+        // Test 4: Load non-existent key
+        const defaultVal = loadFromStorage('non-existent-key', 'default');
+        result.innerHTML += `✓ Default value: ${defaultVal === 'default' ? 'SUCCESS' : 'FAILED'}\n`;
+        
+        // Test 5: Remove key
+        removeFromStorage(TEST_KEY);
+        const removed = loadFromStorage(TEST_KEY, null);
+        result.innerHTML += `✓ Remove: ${removed === null ? 'SUCCESS' : 'FAILED'}\n`;
+        
+        result.innerHTML += '\n<span class="success">All storage util tests passed! ✓</span>';
+      } catch (error) {
+        result.innerHTML += `\n<span class="error">Error: ${error.message}</span>`;
+      }
+    };
+
+    window.clearTestData = function() {
+      const result = document.getElementById('clear-result');
+      try {
+        localStorage.removeItem('cart-items');
+        localStorage.removeItem('user-orders');
+        localStorage.removeItem('test-key');
+        result.innerHTML = '<span class="success">All test data cleared! ✓</span>';
+      } catch (error) {
+        result.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+      }
+    };
+  </script>
+</body>
+</html>
