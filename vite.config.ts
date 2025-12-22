@@ -4,8 +4,8 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  // Base URL for GitHub Pages - update 'shop-mvp' to your repository name
-  base: process.env.NODE_ENV === 'production' ? '/shop-mvp/' : '/',
+  // Base URL - for Netlify use '/', for GitHub Pages use '/repo-name/'
+  base: '/',
   plugins: [vue()],
   resolve: {
     alias: {
