@@ -46,6 +46,7 @@
             :alt="`Изображение товара: ${product.title}`"
             class="product-details__image"
             loading="lazy"
+            decoding="async"
           >
         </div>
         <!-- Thumbnails -->
@@ -65,6 +66,8 @@
               :src="image"
               :alt="`Миниатюра ${index + 1}`"
               class="product-details__thumbnail-image"
+              loading="lazy"
+              decoding="async"
             >
           </button>
         </div>

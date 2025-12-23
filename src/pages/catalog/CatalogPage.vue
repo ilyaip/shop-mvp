@@ -7,7 +7,6 @@
       <h2 class="filters-title">
         Фильтры
       </h2>
-      <CategoryFilter />
       <PriceFilter />
     </aside>
 
@@ -76,7 +75,7 @@ import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useProductsStore } from '@/app/stores/products';
 import { useAddToCart } from '@/features/add-to-cart/model/useAddToCart';
-import { CategoryFilter, PriceFilter } from '@/features/product-filters';
+import { PriceFilter } from '@/features/product-filters';
 import { ProductCard, ProductSkeleton } from '@/entities/product';
 import { Button } from '@/shared/ui';
 import type { Product } from '@/shared/types/global';

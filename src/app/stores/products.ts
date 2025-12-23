@@ -6,7 +6,7 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import type { Product, ProductFilters } from '@/shared/types/global';
-import { mockProducts, mockCategories } from '@/shared/api/mock-data';
+import { mockProducts } from '@/shared/api/mock-data';
 
 export const useProductsStore = defineStore('products', () => {
   // State
@@ -17,11 +17,6 @@ export const useProductsStore = defineStore('products', () => {
   // Computed
   const filteredProducts = computed(() => {
     let result = products.value;
-
-    // Filter by category
-    if (filters.value.category) {
-      result = result.filter((p) => p.category === filters.value.category);
-    }
 
     // Filter by price range
     if (filters.value.minPrice !== undefined) {
@@ -43,10 +38,6 @@ export const useProductsStore = defineStore('products', () => {
     }
 
     return result;
-  });
-
-  const categories = computed(() => {
-    return Array.from(mockCategories);
   });
 
   // Actions
@@ -82,7 +73,6 @@ export const useProductsStore = defineStore('products', () => {
     isLoading,
     // Computed
     filteredProducts,
-    categories,
     // Actions
     setFilters,
     clearFilters,

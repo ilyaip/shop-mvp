@@ -34,15 +34,16 @@ const { itemCount } = storeToRefs(cartStore);
   align-items: center;
   justify-content: center;
   padding: 0.5rem;
-  color: var(--text-primary);
+  color: var(--color-text);
   text-decoration: none;
   border-radius: var(--radius-md);
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 }
 
 .cart-widget:hover {
-  background-color: var(--bg-secondary);
-  color: var(--primary);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-primary);
+  transform: scale(1.05);
 }
 
 .cart-widget:focus-visible {
@@ -70,8 +71,8 @@ const { itemCount } = storeToRefs(cartStore);
   font-size: 0.75rem;
   font-weight: 600;
   color: white;
-  background-color: var(--primary);
+  background-color: var(--color-error);
   border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 </style>

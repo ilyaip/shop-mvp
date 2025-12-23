@@ -6,6 +6,7 @@
         :alt="item.product.title"
         class="cart-item__image"
         loading="lazy"
+        decoding="async"
       >
     </div>
     <div class="cart-item__content">
