@@ -6,15 +6,24 @@
     <div class="header-container">
       <div class="header-left">
         <router-link
-          to="/catalog"
+          to="/"
           class="logo"
-          aria-label="Vue Shop - Главная страница"
+          :aria-label="`${brand?.name || 'Modern Store'} - Главная страница`"
         >
+          <img
+            v-if="brand?.logo"
+            :src="brand.logo"
+            :alt="brand.name"
+            class="logo-image"
+            loading="lazy"
+            decoding="async"
+          />
           <Store
+            v-else
             :size="28"
             aria-hidden="true"
           />
-          <span class="logo-text">Vue Shop</span>
+          <span class="logo-text">{{ brand?.name || 'Modern Store' }}</span>
         </router-link>
       </div>
 
@@ -24,6 +33,13 @@
         role="navigation"
         aria-label="Основная навигация"
       >
+        <router-link
+          to="/"
+          class="nav-link"
+          @click="closeMobileMenu"
+        >
+          Главная
+        </router-link>
         <router-link
           to="/catalog"
           class="nav-link"
@@ -69,8 +85,10 @@
 import { ref } from 'vue';
 import { Store, Menu, X } from 'lucide-vue-next';
 import { CartWidget } from '@/widgets/cart-widget';
+import { useTheme } from '@/features/apply-theme';
 
 const isMobileMenuOpen = ref(false);
+const { brand } = useTheme();
 
 function toggleMobileMenu() {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -86,11 +104,21 @@ function closeMobileMenu() {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: var(--bg-primary);
-  border-bottom: 1px solid var(--border-color);
+  /* Liquid glass effect with theme colors */
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  border-bottom: 1px solid var(--color-border);
   box-shadow: var(--shadow-md);
-  backdrop-filter: blur(8px);
-  background-color: rgba(255, 255, 255, 0.95);
+  transition: all var(--transition-base);
+  will-change: backdrop-filter, transform;
+}
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(20px)) {
+  .app-header {
+    background: var(--color-bg);
+  }
 }
 
 .header-container {
@@ -114,13 +142,13 @@ function closeMobileMenu() {
   gap: 0.75rem;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--color-text);
   text-decoration: none;
   transition: all var(--transition-base);
 }
 
 .logo:hover {
-  color: var(--primary);
+  color: var(--color-primary);
   transform: scale(1.02);
 }
 
@@ -132,6 +160,13 @@ function closeMobileMenu() {
   outline: 3px solid var(--color-primary);
   outline-offset: 2px;
   border-radius: var(--radius-md);
+}
+
+.logo-image {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
 }
 
 .logo-text {
@@ -147,7 +182,7 @@ function closeMobileMenu() {
 .nav-link {
   font-size: 1rem;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--color-text);
   text-decoration: none;
   transition: all var(--transition-base);
   padding: 0.5rem 0;
@@ -162,12 +197,12 @@ function closeMobileMenu() {
   left: 0;
   width: 0;
   height: 2px;
-  background-color: var(--primary);
+  background-color: var(--color-primary);
   transition: width var(--transition-base);
 }
 
 .nav-link:hover {
-  color: var(--primary);
+  color: var(--color-primary);
 }
 
 .nav-link:hover::after {
@@ -181,7 +216,7 @@ function closeMobileMenu() {
 }
 
 .nav-link.router-link-active {
-  color: var(--primary);
+  color: var(--color-primary);
 }
 
 .nav-link.router-link-active::after {
@@ -201,14 +236,15 @@ function closeMobileMenu() {
   padding: 0.5rem;
   background: none;
   border: none;
-  color: var(--text-primary);
+  color: var(--color-text);
   cursor: pointer;
   border-radius: var(--radius-md);
   transition: all var(--transition-base);
 }
 
 .mobile-menu-button:hover {
-  background-color: var(--bg-secondary);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-primary);
   transform: scale(1.1);
 }
 
@@ -250,9 +286,11 @@ function closeMobileMenu() {
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-    background-color: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--border-color);
+    /* Liquid glass effect for mobile menu */
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+    border-bottom: 1px solid var(--color-border);
     box-shadow: var(--shadow-lg);
     padding: 1rem 1.5rem;
     transform: translateY(-100%);
@@ -260,6 +298,13 @@ function closeMobileMenu() {
     transition: transform var(--transition-slow) cubic-bezier(0.34, 1.56, 0.64, 1), 
                 opacity var(--transition-base);
     pointer-events: none;
+    will-change: transform, opacity;
+  }
+  
+  @supports not (backdrop-filter: blur(20px)) {
+    .header-nav {
+      background: var(--color-bg);
+    }
   }
 
   .header-nav.nav-open {
@@ -271,7 +316,7 @@ function closeMobileMenu() {
 
   .nav-link {
     padding: 0.75rem 0;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .nav-link::after {
@@ -290,6 +335,40 @@ function closeMobileMenu() {
 
   .logo {
     font-size: 1.125rem;
+  }
+  
+  .logo-image {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .app-header,
+  .logo,
+  .nav-link,
+  .mobile-menu-button,
+  .header-nav {
+    transition: none;
+    animation: none;
+  }
+  
+  .app-header,
+  .header-nav {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--color-bg);
+    will-change: auto;
+  }
+}
+
+/* Optimize backdrop-filter on mobile devices */
+@media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .app-header,
+  .header-nav {
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
   }
 }
 </style>

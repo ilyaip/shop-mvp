@@ -5,7 +5,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/catalog'
+      name: 'landing',
+      component: () => import('@/pages/landing/LandingPage.vue')
     },
     {
       path: '/catalog',

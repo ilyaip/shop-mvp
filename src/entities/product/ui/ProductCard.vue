@@ -18,6 +18,7 @@
         :alt="`Изображение товара: ${product.title}`"
         class="product-card__image"
         loading="lazy"
+        decoding="async"
       >
       <!-- Image indicators -->
       <div 
@@ -144,12 +145,17 @@ function handleAddToCart() {
   transition: all var(--transition-base);
   cursor: pointer;
   height: 100%;
+  will-change: transform;
+}
+
+.product-card:hover {
+  transform: translateY(-8px) scale(1.02);
 }
 
 .product-card:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 4px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
 }
 
 .product-card__image-wrapper {
@@ -160,6 +166,13 @@ function handleAddToCart() {
   position: relative;
   margin-bottom: var(--spacing-md);
   cursor: pointer;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base);
+}
+
+.product-card:hover .product-card__image-wrapper {
+  box-shadow: var(--shadow-xl);
 }
 
 .product-card__image {
@@ -168,6 +181,8 @@ function handleAddToCart() {
   object-fit: cover;
   transition: transform var(--transition-slow);
   user-select: none;
+  border-radius: var(--radius-xl);
+  will-change: transform;
 }
 
 .product-card:hover .product-card__image {
@@ -208,6 +223,7 @@ function handleAddToCart() {
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 }
 
 .product-card:hover .product-card__overlay {
@@ -219,6 +235,7 @@ function handleAddToCart() {
   max-width: 280px;
   transform: translateY(20px);
   transition: all var(--transition-base);
+  will-change: transform, opacity;
 }
 
 .product-card:hover .product-card__add-button {
@@ -358,6 +375,25 @@ function handleAddToCart() {
     transform: translateY(0);
     font-size: var(--font-size-sm);
     padding: var(--spacing-sm) var(--spacing-md);
+  }
+}
+
+/* Disable animations and will-change for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .product-card,
+  .product-card__image,
+  .product-card__add-button {
+    will-change: auto;
+    transition: none;
+    animation: none;
+  }
+  
+  .product-card:hover {
+    transform: none;
+  }
+  
+  .product-card:hover .product-card__image {
+    transform: none;
   }
 }
 </style>

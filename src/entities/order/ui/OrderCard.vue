@@ -32,6 +32,8 @@
           :src="item.product.image"
           :alt="`Изображение товара: ${item.product.title}`"
           class="order-card__item-image"
+          loading="lazy"
+          decoding="async"
         >
         <div class="order-card__item-info">
           <span class="order-card__item-title">{{ item.product.title }}</span>

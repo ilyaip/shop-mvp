@@ -9,10 +9,6 @@ import type { ProductFilters } from '@/shared/types/global';
 export function useFilters() {
   const productsStore = useProductsStore();
 
-  function setCategory(category: string | undefined) {
-    productsStore.setFilters({ category });
-  }
-
   function setPriceRange(minPrice: number | undefined, maxPrice: number | undefined) {
     productsStore.setFilters({ minPrice, maxPrice });
   }
@@ -31,7 +27,6 @@ export function useFilters() {
 
   return {
     filters: productsStore.filters,
-    setCategory,
     setPriceRange,
     setSearchQuery,
     setFilters,

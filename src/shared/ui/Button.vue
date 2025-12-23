@@ -44,6 +44,7 @@ defineEmits<{
   position: relative;
   min-height: 40px;
   box-shadow: var(--shadow-sm);
+  will-change: transform;
 }
 
 .button:hover:not(:disabled) {
@@ -127,6 +128,19 @@ defineEmits<{
   .button {
     padding: var(--spacing-sm) var(--spacing-md);
     font-size: var(--font-size-sm);
+  }
+}
+
+/* Disable animations and will-change for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    will-change: auto;
+    transition: none;
+  }
+  
+  .button:hover:not(:disabled),
+  .button:active:not(:disabled) {
+    transform: none;
   }
 }
 </style>
