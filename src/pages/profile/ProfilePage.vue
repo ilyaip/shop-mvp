@@ -1,5 +1,11 @@
 <template>
   <div class="profile-page">
+    <!-- Theme Settings Section -->
+    <section class="theme-settings">
+      <h2 class="theme-settings__title">Настройки темы</h2>
+      <ThemeSwitcher />
+    </section>
+
     <h1 class="profile-page__title">
       Мои заказы
     </h1>
@@ -48,6 +54,7 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '@/app/stores/user';
 import { OrderCard } from '@/entities/order';
 import { Button } from '@/shared/ui';
+import { ThemeSwitcher } from '@/widgets/theme-switcher';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -70,6 +77,20 @@ function handleGoToCatalog() {
   margin: 0 auto;
   padding: var(--spacing-2xl);
   animation: fadeIn var(--transition-base) ease-out;
+}
+
+/* Theme Settings Section */
+.theme-settings {
+  margin-bottom: var(--spacing-3xl);
+  animation: fadeIn var(--transition-base) ease-out;
+}
+
+.theme-settings__title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-lg) 0;
+  line-height: var(--line-height-tight);
 }
 
 .profile-page__title {
@@ -120,6 +141,14 @@ function handleGoToCatalog() {
     padding: var(--spacing-lg);
   }
 
+  .theme-settings {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .theme-settings__title {
+    font-size: var(--font-size-xl);
+  }
+
   .profile-page__title {
     font-size: var(--font-size-2xl);
   }
@@ -140,6 +169,15 @@ function handleGoToCatalog() {
 @media (max-width: 480px) {
   .profile-page {
     padding: var(--spacing-md);
+  }
+
+  .theme-settings {
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .theme-settings__title {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-md);
   }
 
   .profile-page__title {
