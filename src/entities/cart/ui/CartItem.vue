@@ -48,7 +48,7 @@
     </div>
     <div class="cart-item__total">
       <span class="cart-item__total-label">Итого:</span>
-      <span class="cart-item__total-price">{{ formatPrice(item.product.price * item.quantity) }}</span>
+      <span class="cart-item__total-price">{{ formatPrice((item.product.price ?? 0) * item.quantity) }}</span>
     </div>
   </div>
 </template>

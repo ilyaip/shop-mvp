@@ -70,9 +70,9 @@
               </div>
               <span
                 class="order-summary__item-price"
-                :aria-label="`Стоимость: ${formatPrice(item.product.price * item.quantity)}`"
+                :aria-label="`Стоимость: ${formatPrice((item.product.price ?? 0) * item.quantity)}`"
               >
-                {{ formatPrice(item.product.price * item.quantity) }}
+                {{ formatPrice((item.product.price ?? 0) * item.quantity) }}
               </span>
             </div>
           </div>

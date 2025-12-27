@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тест функционала "Читать далее" - 10 строк</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 40px;
+      background: #f5f5f5;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .description {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .description-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: calc(1.6em * 10); /* 10 строк */
+      overflow: hidden;
+      position: relative;
+      transition: max-height 0.3s ease-in-out;
+    }
+
+    .description.expanded .description-content {
+      max-height: none;
+    }
+
+    /* Градиент затухания */
+    .description-content::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, white);
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .description.expanded .description-content::after {
+      opacity: 0;
+    }
+
+    .paragraph {
+      color: #555;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .show-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 10px 24px;
+      background-color: transparent;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      color: #3B82F6;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      align-self: flex-start;
+    }
+
+    .show-more:hover {
+      background-color: #DBEAFE;
+      border-color: #3B82F6;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .show-more:active {
+      transform: translateY(0);
+    }
+
+    .show-more-icon {
+      transition: transform 0.2s;
+    }
+
+    .show-more-icon.rotated {
+      transform: rotate(180deg);
+    }
+
+    .info {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f0f9ff;
+      border-left: 4px solid #3B82F6;
+      border-radius: 4px;
+    }
+
+    .info h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #1e40af;
+    }
+
+    .info p {
+      color: #555;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .highlight {
+      background: #fef3c7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📝 Тест функционала "Читать далее" - Ограничение 10 строк</h1>
+    
+    <div class="description" id="description">
+      <div class="description-content">
+        <!-- Paragraphs will be inserted here -->
+      </div>
+      <button class="show-more" id="toggleBtn">
+        Читать далее
+        <svg class="show-more-icon" id="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="info">
+      <h2>ℹ️ Как это работает</h2>
+      <p>✅ Описание ограничено <span class="highlight">10 строками текста</span> (не параграфами!)</p>
+      <p>✅ Используется CSS <code>max-height: calc(1.6em * 10)</code> для ограничения</p>
+      <p>✅ Градиент затухания внизу показывает, что есть еще текст</p>
+      <p>✅ Кнопка "Читать далее" разворачивает полное описание</p>
+      <p>✅ Плавная анимация при разворачивании/сворачивании</p>
+      <p>✅ Иконка стрелки поворачивается на 180°</p>
+    </div>
+  </div>
+
+  <script>
+    const descriptionEl = document.getElementById('description');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const icon = document.getElementById('icon');
+    const contentEl = descriptionEl.querySelector('.description-content');
+    
+    // Длинное описание товара
+    const paragraphs = [
+      "Интерактивная игрушка для кошек и собак",
+      "Заряжается 1,5 часа, после этого ваш питомец может весело играть до 4 часов.",
+      "Вращается на 360 градусов, перемещается сам по дому.",
+      "Благодаря форме шара и системе самобалансировки, шар автоматически меняет свое направление при столкновении со стеной, стулом, дверью и т. п.",
+      "Постоянно меняет траекторию привлекая питомца, а также излучая красный свет от светодиода.",
+      "Лучше всего катится по твердому полу, с трудом по ковру и мягкому покрытию.",
+      "Мяч автоматически выключается через 40 минут катания.",
+      "Порадуйте Вашего питомца игрушкой, которая надолго привлечет его внимание на увлекательную игру.",
+      "Изготовлен из прочного ABS пластика, безопасного для животных.",
+      "Диаметр шара: 7.5 см, идеально подходит для кошек и небольших собак.",
+      "Встроенный аккумулятор 300 мАч, заряжается через USB-кабель (входит в комплект).",
+      "Три режима работы: медленный, средний и быстрый.",
+      "Водонепроницаемый корпус позволяет легко очищать игрушку.",
+      "Яркий LED индикатор показывает уровень заряда батареи.",
+      "Гарантия производителя 12 месяцев."
+    ];
+
+    let isExpanded = false;
+
+    // Render paragraphs
+    paragraphs.forEach((text, index) => {
+      const p = document.createElement('p');
+      p.className = 'paragraph';
+      p.textContent = text;
+      contentEl.appendChild(p);
+    });
+
+    // Toggle function
+    toggleBtn.addEventListener('click', () => {
+      isExpanded = !isExpanded;
+      
+      if (isExpanded) {
+        descriptionEl.classList.add('expanded');
+        toggleBtn.innerHTML = 'Скрыть <svg class="show-more-icon rotated" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
+      } else {
+        descriptionEl.classList.remove('expanded');
+        toggleBtn.innerHTML = 'Читать далее <svg class="show-more-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
+      }
+    });
+  </script>
+</body>
+</html>
