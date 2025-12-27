@@ -44,8 +44,8 @@
         </div>
         <span
           class="order-card__item-price"
-          :aria-label="`Стоимость: ${formatPrice(item.product.price * item.quantity)}`"
-        >{{ formatPrice(item.product.price * item.quantity) }}</span>
+          :aria-label="`Стоимость: ${formatPrice((item.product.price ?? 0) * item.quantity)}`"
+        >{{ formatPrice((item.product.price ?? 0) * item.quantity) }}</span>
       </div>
     </div>
     <div class="order-card__details">

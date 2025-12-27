@@ -6,12 +6,14 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { FrontSettings, ThemePreset, ThemeColors } from '@/shared/types/theme'
-import { fetchThemeSettings, getPresetTheme } from '@/shared/api/theme-data'
+import { fetchSiteSettings } from '@/shared/api/site-settings'
+import { getPresetTheme } from '@/shared/api/theme-data'
 
 export const useThemeStore = defineStore('theme', () => {
   // State
   const settings = ref<FrontSettings | null>(null)
   const isLoading = ref(false)
+  const error = ref<string | null>(null)
   const currentPreset = ref<ThemePreset>('light')
 
   // Computed
@@ -22,18 +24,30 @@ export const useThemeStore = defineStore('theme', () => {
   // Actions
 
   /**
-   * Load theme settings from API (mock data)
+   * Load theme settings from API
    * Falls back to default light theme on error
+   * 
+   * Requirements:
+   * - 5.1: Use fetchSiteSettings API instead of mock data
+   * - 5.2: Apply theme through applyTheme on success
+   * - 5.3: Apply default light theme on error
+   * - 5.4: Set isLoading: true before request
+   * - 5.5: Set isLoading: false after request
+   * - 5.6: Save error in state for debugging
    */
   const loadSettings = async () => {
     isLoading.value = true
+    error.value = null
+    
     try {
-      // Simulate API request
-      const data = await fetchThemeSettings()
+      // Fetch settings from backend API
+      const data = await fetchSiteSettings()
       settings.value = data
       applyTheme(data.colors)
-    } catch (error) {
-      console.error('Failed to load theme settings:', error)
+    } catch (err) {
+      // Save error for debugging
+      error.value = err instanceof Error ? err.message : 'Failed to load settings'
+      console.error('Failed to load theme settings:', err)
       // Fallback to default light theme
       applyPreset('light')
     } finally {
@@ -116,6 +130,7 @@ export const useThemeStore = defineStore('theme', () => {
     // State
     settings,
     isLoading,
+    error,
     currentPreset,
     // Computed
     colors,

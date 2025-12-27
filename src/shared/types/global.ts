@@ -7,10 +7,22 @@ export interface Product {
   id: string;
   title: string;
   description: string;
-  price: number;
+  price?: number; // Optional since it might be missing from API (0 as fallback)
   image: string; // Main image (for backward compatibility)
   images?: string[]; // Array of images for gallery/slider
   category: string;
+  // Additional optional fields from backend API
+  manufacturer?: string;
+  video?: string;
+  dimensions?: {
+    height: number;
+    depth: number;
+    width: number;
+  };
+  weight?: {
+    value: number;
+    unit: string;
+  };
 }
 
 export interface ProductFilters {
