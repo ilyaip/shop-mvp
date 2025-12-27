@@ -3,13 +3,21 @@
  */
 
 /**
- * Format price with currency symbol
+ * Format price with currency symbol and thousands separator
  * @param price - Price value to format
  * @param currency - Currency symbol (default: '₽')
- * @returns Formatted price string
+ * @returns Formatted price string or "Цена уточняется" if price is 0 or undefined
  */
-export function formatPrice(price: number, currency: string = '₽'): string {
-  return `${price.toFixed(2)} ${currency}`;
+export function formatPrice(price: number | undefined, currency: string = '₽'): string {
+  // Handle missing or zero price
+  if (price === undefined || price === null || price === 0) {
+    return 'Цена уточняется';
+  }
+  
+  // Format number with thousands separator (space)
+  const formattedNumber = price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  
+  return `${formattedNumber} ${currency}`;
 }
 
 /**
@@ -27,4 +35,23 @@ export function formatDate(date: string | Date): string {
   const minutes = String(dateObj.getMinutes()).padStart(2, '0');
   
   return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
+
+/**
+ * Format product description by converting <br/> tags to paragraphs
+ * @param description - Raw description text with <br/> tags
+ * @returns Array of paragraph strings
+ */
+export function formatDescription(description: string): string[] {
+  if (!description) {
+    return [];
+  }
+  
+  // Split by <br/> or <br> tags (case insensitive, with or without closing slash)
+  const paragraphs = description
+    .split(/<br\s*\/?>/gi)
+    .map(p => p.trim())
+    .filter(p => p.length > 0);
+  
+  return paragraphs;
 }

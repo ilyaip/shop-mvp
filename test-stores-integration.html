@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stores Integration Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-section h2 {
+      margin-top: 0;
+      color: #333;
+    }
+    .status {
+      padding: 8px 12px;
+      border-radius: 4px;
+      display: inline-block;
+      margin: 5px 0;
+      font-weight: 500;
+    }
+    .status.loading { background: #fef3c7; color: #92400e; }
+    .status.success { background: #d1fae5; color: #065f46; }
+    .status.error { background: #fee2e2; color: #991b1b; }
+    .data-display {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 10px 0;
+      font-family: monospace;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 Stores Integration Test</h1>
+  
+  <div class="test-section">
+    <h2>Theme Store</h2>
+    <div id="theme-status"></div>
+    <div id="theme-data"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Products Store</h2>
+    <div id="products-status"></div>
+    <div id="products-data"></div>
+  </div>
+
+  <script type="module">
+    import { createPinia } from './node_modules/pinia/dist/pinia.mjs'
+    import { useThemeStore } from './src/app/stores/theme.ts'
+    import { useProductsStore } from './src/app/stores/products.ts'
+
+    const pinia = createPinia()
+
+    // Test Theme Store
+    async function testThemeStore() {
+      const statusEl = document.getElementById('theme-status')
+      const dataEl = document.getElementById('theme-data')
+      
+      statusEl.innerHTML = '<div class="status loading">⏳ Loading theme settings...</div>'
+      
+      try {
+        const themeStore = useThemeStore(pinia)
+        await themeStore.loadSettings()
+        
+        if (themeStore.settings) {
+          statusEl.innerHTML = '<div class="status success">✓ Theme loaded successfully</div>'
+          dataEl.innerHTML = `
+            <div class="data-display">
+              <strong>Brand:</strong> ${themeStore.brand?.name}<br>
+              <strong>Primary Color:</strong> ${themeStore.colors?.primary}<br>
+              <strong>Hero Title:</strong> ${themeStore.hero?.title}<br>
+              <strong>Loading:</strong> ${themeStore.isLoading}<br>
+              <strong>Error:</strong> ${themeStore.error || 'None'}
+            </div>
+          `
+        } else {
+          statusEl.innerHTML = '<div class="status error">✗ No settings loaded</div>'
+        }
+      } catch (error) {
+        statusEl.innerHTML = '<div class="status error">✗ Error: ' + error.message + '</div>'
+      }
+    }
+
+    // Test Products Store
+    async function testProductsStore() {
+      const statusEl = document.getElementById('products-status')
+      const dataEl = document.getElementById('products-data')
+      
+      statusEl.innerHTML = '<div class="status loading">⏳ Loading products...</div>'
+      
+      try {
+        const productsStore = useProductsStore(pinia)
+        await productsStore.loadProducts()
+        
+        if (productsStore.products.length > 0) {
+          statusEl.innerHTML = '<div class="status success">✓ Products loaded successfully</div>'
+          dataEl.innerHTML = `
+            <div class="data-display">
+              <strong>Total Products:</strong> ${productsStore.products.length}<br>
+              <strong>First Product:</strong> ${productsStore.products[0].title}<br>
+              <strong>Loading:</strong> ${productsStore.isLoading}<br>
+              <strong>Error:</strong> ${productsStore.error || 'None'}
+            </div>
+          `
+        } else {
+          statusEl.innerHTML = '<div class="status error">✗ No products loaded</div>'
+        }
+      } catch (error) {
+        statusEl.innerHTML = '<div class="status error">✗ Error: ' + error.message + '</div>'
+      }
+    }
+
+    // Run tests
+    testThemeStore()
+    testProductsStore()
+  </script>
+</body>
+</html>

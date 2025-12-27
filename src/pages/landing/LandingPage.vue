@@ -1,8 +1,27 @@
 <template>
   <div class="landing-page">
-    <!-- Hero Section -->
+    <!-- Hero Section - Loading State -->
     <section 
+      v-if="isLoading" 
+      class="hero hero--loading"
+      aria-labelledby="hero-title"
+      aria-busy="true"
+    >
+      <div class="hero__overlay" aria-hidden="true"></div>
+      <div class="hero__content">
+        <div class="hero__glass-card">
+          <Skeleton variant="rectangular" width="100%" height="60px" class="hero__skeleton-title" />
+          <Skeleton variant="rectangular" width="80%" height="30px" class="hero__skeleton-subtitle" />
+          <Skeleton variant="rectangular" width="200px" height="48px" class="hero__skeleton-button" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Hero Section - Loaded State -->
+    <section 
+      v-else
       class="hero" 
+      :class="{ 'hero--no-image': !hero?.image }"
       :style="heroBackgroundStyle"
       aria-labelledby="hero-title"
     >
@@ -52,10 +71,10 @@
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTheme } from '@/features/apply-theme'
-import { Button } from '@/shared/ui'
+import { Button, Skeleton } from '@/shared/ui'
 
 const router = useRouter()
-const { hero } = useTheme()
+const { hero, isLoading } = useTheme()
 
 const heroBackgroundStyle = computed(() => {
   if (hero?.value?.image) {
@@ -63,7 +82,10 @@ const heroBackgroundStyle = computed(() => {
       backgroundImage: `url(${hero.value.image})`
     }
   }
-  return {}
+  // Gradient fallback when no image is available
+  return {
+    background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)'
+  }
 })
 
 const goToCatalog = () => {
@@ -101,6 +123,29 @@ onMounted(() => {
   padding-top: 64px; /* Добавляем отступ для header */
 }
 
+/* Hero with gradient fallback (no image) */
+.hero--no-image {
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Hero loading state */
+.hero--loading {
+  background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+}
+
 .hero__overlay {
   position: absolute;
   inset: 0;
@@ -109,6 +154,22 @@ onMounted(() => {
     rgba(0, 0, 0, 0.3),
     rgba(0, 0, 0, 0.5)
   );
+}
+
+/* Skeleton styles for hero section */
+.hero__skeleton-title {
+  margin-bottom: var(--spacing-md);
+  border-radius: var(--radius-lg);
+}
+
+.hero__skeleton-subtitle {
+  margin: 0 auto var(--spacing-xl);
+  border-radius: var(--radius-md);
+}
+
+.hero__skeleton-button {
+  margin: 0 auto;
+  border-radius: var(--radius-md);
 }
 
 .hero__content {
@@ -308,6 +369,11 @@ onMounted(() => {
     -webkit-backdrop-filter: none !important;
     background: rgba(255, 255, 255, 0.95);
     will-change: auto;
+  }
+
+  .hero--no-image {
+    animation: none;
+    background-size: 100% 100%;
   }
 
   .feature-card {

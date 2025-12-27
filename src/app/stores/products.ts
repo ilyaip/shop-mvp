@@ -6,25 +6,26 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import type { Product, ProductFilters } from '@/shared/types/global';
-import { mockProducts } from '@/shared/api/mock-data';
+import { fetchProducts, fetchProductById } from '@/shared/api/products';
 
 export const useProductsStore = defineStore('products', () => {
   // State
   const products = ref<Product[]>([]);
   const filters = ref<ProductFilters>({});
   const isLoading = ref(false);
+  const error = ref<string | null>(null);
 
   // Computed
   const filteredProducts = computed(() => {
     let result = products.value;
 
-    // Filter by price range
+    // Filter by price range (treat undefined/0 prices as 0)
     if (filters.value.minPrice !== undefined) {
-      result = result.filter((p) => p.price >= filters.value.minPrice!);
+      result = result.filter((p) => (p.price ?? 0) >= filters.value.minPrice!);
     }
 
     if (filters.value.maxPrice !== undefined) {
-      result = result.filter((p) => p.price <= filters.value.maxPrice!);
+      result = result.filter((p) => (p.price ?? 0) <= filters.value.maxPrice!);
     }
 
     // Filter by search query
@@ -49,33 +50,64 @@ export const useProductsStore = defineStore('products', () => {
     filters.value = {};
   }
 
-  function getProductById(id: string): Product | undefined {
-    return products.value.find((p) => p.id === id);
+  // Get product by ID with caching and API fallback
+  async function getProductById(id: string): Promise<Product | null> {
+    // First, check if product exists in state (cache)
+    const cached = products.value.find((p) => p.id === id);
+    if (cached) {
+      return cached;
+    }
+
+    // If not found in cache, fetch from API
+    try {
+      const product = await fetchProductById(Number(id));
+      
+      // Add to cache if found
+      if (product) {
+        products.value.push(product);
+      }
+      
+      return product;
+    } catch (err) {
+      console.error(`Failed to get product ${id}:`, err);
+      return null;
+    }
   }
 
-  // Load mock data on store initialization
-  function loadProducts() {
+  // Load products from API
+  async function loadProducts() {
+    // Prevent concurrent requests
+    if (isLoading.value) {
+      return;
+    }
+    
     isLoading.value = true;
-    // Simulate async loading
-    setTimeout(() => {
-      products.value = [...mockProducts];
+    error.value = null;
+    
+    try {
+      const data = await fetchProducts();
+      products.value = data;
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Failed to load products';
+      console.error('Failed to load products:', err);
+      products.value = [];
+    } finally {
       isLoading.value = false;
-    }, 0);
+    }
   }
-
-  // Initialize products
-  loadProducts();
 
   return {
     // State
     products,
     filters,
     isLoading,
+    error,
     // Computed
     filteredProducts,
     // Actions
     setFilters,
     clearFilters,
     getProductById,
+    loadProducts,
   };
 });

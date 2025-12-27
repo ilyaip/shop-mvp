@@ -19,9 +19,42 @@
         Каталог товаров
       </h1>
 
+      <!-- Error state -->
+      <div
+        v-if="productsStore.error"
+        class="error-state"
+        role="alert"
+        aria-live="assertive"
+      >
+        <p class="error-state__message">
+          {{ productsStore.error }}
+        </p>
+        <!-- Show CORS help link if it's a CORS error -->
+        <p
+          v-if="isCORSError"
+          class="error-state__help"
+        >
+          Проблема с CORS? 
+          <a
+            href="/CORS_SETUP_GUIDE.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="error-state__link"
+          >
+            Смотрите руководство по настройке
+          </a>
+        </p>
+        <Button
+          variant="primary"
+          @click="handleRetry"
+        >
+          Попробовать снова
+        </Button>
+      </div>
+
       <!-- Loading state -->
       <div
-        v-if="productsStore.isLoading"
+        v-else-if="productsStore.isLoading"
         class="products-grid"
         aria-busy="true"
         aria-label="Загрузка товаров"
@@ -59,7 +92,16 @@
         <p class="empty-state__message">
           Товары не найдены
         </p>
+        <!-- Show refresh button if no products at all, otherwise show clear filters -->
         <Button
+          v-if="productsStore.products.length === 0"
+          variant="primary"
+          @click="handleRetry"
+        >
+          Обновить
+        </Button>
+        <Button
+          v-else
           variant="outline"
           @click="handleClearFilters"
         >
@@ -86,6 +128,11 @@ const { addToCart } = useAddToCart();
 
 const filteredProducts = computed(() => productsStore.filteredProducts);
 
+// Check if error is CORS related
+const isCORSError = computed(() => {
+  return productsStore.error?.includes('CORS') || productsStore.error?.includes('подключения');
+});
+
 function handleProductClick(product: Product) {
   router.push(`/product/${product.id}`);
 }
@@ -96,6 +143,10 @@ function handleAddToCart(product: Product) {
 
 function handleClearFilters() {
   productsStore.clearFilters();
+}
+
+function handleRetry() {
+  productsStore.loadProducts();
 }
 </script>
 
@@ -167,6 +218,44 @@ function handleClearFilters() {
   font-size: var(--font-size-xl);
   color: var(--color-text-light);
   margin: 0;
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-3xl);
+  text-align: center;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-lg);
+  animation: fadeIn var(--transition-base) ease-out;
+}
+
+.error-state__message {
+  font-size: var(--font-size-xl);
+  color: var(--color-error);
+  margin: 0;
+  font-weight: var(--font-weight-medium);
+}
+
+.error-state__help {
+  font-size: var(--font-size-base);
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+.error-state__link {
+  color: var(--color-primary);
+  text-decoration: underline;
+  font-weight: var(--font-weight-medium);
+  transition: color var(--transition-fast);
+}
+
+.error-state__link:hover {
+  color: var(--color-primary-hover);
 }
 
 @media (max-width: 1200px) {
