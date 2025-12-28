@@ -3,7 +3,7 @@
     <div class="footer-container">
       <div class="footer-section">
         <h3 class="footer-title">
-          Vue Shop
+          {{ brandName }}
         </h3>
         <p class="footer-description">
           Современный интернет-магазин с удобным интерфейсом и широким ассортиментом товаров.
@@ -71,7 +71,7 @@
 
     <div class="footer-bottom">
       <p class="copyright">
-        &copy; {{ currentYear }} Vue Shop. Все права защищены.
+        &copy; {{ currentYear }} {{ brandName }}. Все права защищены.
       </p>
     </div>
   </footer>
@@ -80,8 +80,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Facebook, Twitter, Instagram, Github, Mail, Phone } from 'lucide-vue-next';
+import { useThemeStore } from '@/app/stores/theme';
 
+const themeStore = useThemeStore();
 const currentYear = computed(() => new Date().getFullYear());
+const brandName = computed(() => themeStore.brand?.name || 'Vue Shop');
 </script>
 
 <style scoped>
