@@ -11,7 +11,13 @@ node_modules
 dist
 dist-ssr
 *.local
+
+# Environment variables
+# Keep .env.development and .env.production in repo (no secrets)
+# Only ignore local overrides
 .env
+.env.local
+.env.*.local
 
 # Editor directories and files
 .vscode/*

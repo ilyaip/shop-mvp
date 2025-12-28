@@ -42,7 +42,21 @@
 npm install
 ```
 
-### 2. Запуск dev-сервера
+### 2. Настройка окружения (опционально)
+
+Файлы `.env.development` и `.env.production` уже включены в репозиторий с настройками по умолчанию:
+- **Development**: `http://localhost:8000`
+- **Production**: `https://idigeneri.ru`
+
+Если нужны другие настройки, создайте файл `.env.local`:
+```bash
+# .env.local
+VITE_API_BASE_URL=http://localhost:3000
+```
+
+Подробнее см. `ENV_SETUP.md`
+
+### 3. Запуск dev-сервера
 
 ```bash
 npm run dev
