@@ -128,7 +128,7 @@ import { ref } from 'vue'
 
 defineProps<{
   message: string
-  type?: 'success' | 'error' | 'info'
+  type?: 'success' | 'error' | 'info' | 'warning'
 }>()
 
 defineEmits<{
@@ -174,6 +174,14 @@ const visible = ref(true)
 
 .notification--info .notification__icon {
   color: var(--color-primary);
+}
+
+.notification--warning {
+  border-left-color: var(--color-warning);
+}
+
+.notification--warning .notification__icon {
+  color: var(--color-warning);
 }
 
 .notification__icon {
