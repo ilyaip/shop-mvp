@@ -76,3 +76,15 @@ export interface APIError {
   status?: number;
   code?: string;
 }
+
+// Email Order Types
+export interface SendOrderEmailRequest {
+  address_to: string;
+  subject: string;
+  body_html: string;
+}
+
+export interface SendOrderEmailResponse {
+  success: boolean;
+  message?: string;
+}

@@ -62,7 +62,7 @@ export interface UserState {
 }
 
 // UI related types
-export type NotificationType = 'success' | 'error' | 'info';
+export type NotificationType = 'success' | 'error' | 'info' | 'warning';
 
 export interface Notification {
   id: string;
