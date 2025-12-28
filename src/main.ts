@@ -21,6 +21,14 @@ Promise.all([
   themeStore.loadSettings(),
   productsStore.loadProducts()
 ]).then(() => {
+  // Update meta tags with brand name from settings
+  if (themeStore.brand?.name) {
+    const authorMeta = document.querySelector('meta[name="author"]');
+    if (authorMeta) {
+      authorMeta.setAttribute('content', themeStore.brand.name);
+    }
+  }
+  
   app.mount('#app')
 }).catch((error) => {
   console.error('Failed to initialize app:', error)
