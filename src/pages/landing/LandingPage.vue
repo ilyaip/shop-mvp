@@ -42,7 +42,7 @@
     </section>
 
     <!-- Features Section -->
-    <section class="features" aria-labelledby="features-title">
+    <!-- <section class="features" aria-labelledby="features-title">
       <div class="container">
         <h2 id="features-title" class="visually-hidden">Наши преимущества</h2>
         <div class="features__grid">
@@ -63,7 +63,7 @@
           </article>
         </div>
       </div>
-    </section>
+    </section> -->
   </div>
 </template>
 

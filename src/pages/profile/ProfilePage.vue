@@ -1,10 +1,10 @@
 <template>
   <div class="profile-page">
     <!-- Theme Settings Section -->
-    <section class="theme-settings">
+    <!-- <section class="theme-settings">
       <h2 class="theme-settings__title">Настройки темы</h2>
       <ThemeSwitcher />
-    </section>
+    </section> -->
 
     <h1 class="profile-page__title">
       Мои заказы
@@ -54,7 +54,7 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '@/app/stores/user';
 import { OrderCard } from '@/entities/order';
 import { Button } from '@/shared/ui';
-import { ThemeSwitcher } from '@/widgets/theme-switcher';
+// import { ThemeSwitcher } from '@/widgets/theme-switcher';
 
 const router = useRouter();
 const userStore = useUserStore();
